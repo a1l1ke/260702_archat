@@ -1,9 +1,11 @@
 package com.example.archat.service;
 
-import com.example.archat.controller.dto.ChatResponseDTO;
+import com.example.archat.config.GenAIConfig;
 import com.example.archat.model.Chat;
 import com.example.archat.model.repository.ChatRepository;
 import com.example.archat.model.repository.InMemoryChatRepository;
+import com.google.genai.Client;
+import com.google.genai.types.GenerateContentResponse;
 
 import java.time.ZonedDateTime;
 import java.util.List;
@@ -11,6 +13,7 @@ import java.util.List;
 public class ChatService {
 
     private final ChatRepository chatRepository;
+
     // 1. 생성자를 private으로 변경
     private ChatService() {
         // ChatService - InMemoryChatRepository
@@ -18,8 +21,10 @@ public class ChatService {
         // No. 만약 SupabaseChatRepository로 바꾼다면 생성자에서 진행하는 의존성 주입을 바꿔주기만 하면 OK
         this.chatRepository = InMemoryChatRepository.getInstance();
     }
+
     // 2. instance를 static에 등록
     private static final ChatService instance = new ChatService();
+
     // 3. getInstance() 메서드 만들기 (나중에 상위에서 쓸)
     public static ChatService getInstance() {
         return instance;
@@ -42,7 +47,19 @@ public class ChatService {
     }
 
     private String useAI(Chat chat) {
-        return "%s라고 하셨네요.".formatted(chat.message());
+        try (Client client = GenAIConfig.getClient()) {
+            GenerateContentResponse response = client.models.generateContent(
+                    chat.model(),
+                    chat.message(),
+                    GenAIConfig.getGenerateContentConfig());
+            return response.text();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "문제가 생겼어요 : %s".formatted(e.getMessage());
+            // 원래 사용자에게 노출 X
+        }
+//        return
+//                "%s라고 하셨네요.".formatted(chat.message());
     }
 
     public List<Chat> readHistory(String userId) {

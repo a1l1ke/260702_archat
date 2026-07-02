@@ -29,12 +29,15 @@ public class GenAIChatProvider implements ChatProvider {
     // 히스토리 포함
     @Override
     public String useAI(Chat newChat, List<Chat> chatHistory) {
+//        System.out.println("chatHistory = " + chatHistory);
         List<Content> contents = chatHistory.stream()
                 .map((c) -> Content.builder()
-                        .role(newChat.owner().equals("USER") ? "user" : "model")
+//                        .role(newChat.owner().equals("USER") ? "user" : "model")
+                        .role(c.owner().equals("USER") ? "user" : "model")
                         .parts(Part.builder().text(c.message()).build())
                         .build())
                 .toList();
+//        System.out.println("contents = " + contents);
         try (Client client = GenAIConfig.getClient()) {
             GenerateContentResponse response = client.models.generateContent(
                     newChat.model(),

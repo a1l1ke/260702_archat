@@ -2,6 +2,7 @@ package com.example.archat.presentation.controller;
 
 import com.example.archat.application.service.GeminiChatService;
 import com.example.archat.domain.model.Chat;
+import com.example.archat.domain.service.ChatService;
 import com.example.archat.presentation.dto.ChatResponseDTO;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -15,7 +16,8 @@ import java.util.List;
 
 @WebServlet("/chat")
 public class ChatController extends BaseController {
-    private GeminiChatService chatService;
+    //    private GeminiChatService chatService;
+    private ChatService chatService;
     // init
 
     @Override
@@ -32,7 +34,8 @@ public class ChatController extends BaseController {
         // 접속 -> /chat
         // 데이터 불러오기
         HttpSession session = req.getSession(); // 세션 생성/불러오기 -> 유저를 구분
-        List<ChatResponseDTO> response = chatService.readHistory(session.getId())
+//        List<ChatResponseDTO> response = chatService.readHistory(session.getId())
+        List<ChatResponseDTO> response = chatService.findAllByUserId(session.getId())
                 // Stream -> map -> of(변환) -> jsp에서 최종적으로 만나게 되는...
                 .stream()
                 .map(ChatResponseDTO::of)
@@ -59,7 +62,8 @@ public class ChatController extends BaseController {
                 req.getParameter("model"),
                 ZonedDateTime.now().toString()
         );
-        chatService.sendMessage(chat);
+//        chatService.sendMessage(chat);
+        chatService.save(chat);
         resp.sendRedirect("%s/%s".formatted(req.getContextPath(), "chat"));
     }
 }

@@ -44,82 +44,42 @@
 헥사고날 아키텍처의 핵심은 **"의존성의 방향이 항상 외부에서 내부(도메인)로 흐른다"**는 것입니다.
 
 ```mermaid
-classDiagram
+flowchart TD
     %% 레이어 정의
-    subgraph Presentation_Layer [Presentation (Web/HTTP)]
-        class ChatController {
-            -ChatService chatService
-            +doGet()
-            +doPost()
-        }
-        class ChatResponseDTO {
-            +of(Chat)
-        }
+    subgraph Presentation ["Presentation (Web / Adapter)"]
+        ChatController["ChatController (Servlet)"]
+        ChatResponseDTO["ChatResponseDTO"]
     end
 
-    subgraph Application_Layer [Application (Business Core)]
-        class ChatService {
-            <<interface>>
-            +findAllByUserId(String)
-            +save(Chat)
-        }
-        class GeminiChatService {
-            -ChatRepository chatRepository
-            -ChatProvider chatProvider
-            +findAllByUserId()
-            +save()
-        }
-        class ChatProvider {
-            <<interface>>
-            +useAI(Chat)
-            +useAI(Chat, List~Chat~)
-        }
+    subgraph Application ["Application (Core / Service)"]
+        ChatService["ChatService (Inbound Port)"]
+        GeminiChatService["GeminiChatService (Service Impl)"]
+        ChatProvider["ChatProvider (Outbound Port)"]
+        ChatPublisher["ChatPublisher (Outbound Port)"]
     end
 
-    subgraph Domain_Layer [Domain (Pure Rules)]
-        class Chat {
-            <<record>>
-            +String message
-            +String owner
-            +String userId
-            +String model
-            +String timestamp
-        }
-        class ChatRepository {
-            <<interface>>
-            +save(Chat)
-            +findAllByUserId(String)
-        }
+    subgraph Domain ["Domain (Core / Pure Rules)"]
+        Chat["Chat (Domain Model / Record)"]
+        ChatRepository["ChatRepository (Outbound Port)"]
     end
 
-    subgraph Infrastructure_Layer [Infrastructure (DB & API)]
-        class InMemoryChatRepository {
-            -ConcurrentHashMap chatMap
-            +save(Chat)
-            +findAllByUserId(String)
-        }
-        class GenAIChatProvider {
-            +useAI(Chat)
-            +useAI(Chat, List~Chat~)
-        }
-        class GenAIConfig {
-            +getClient()
-            +getGenerateContentConfig()
-        }
+    subgraph Infrastructure ["Infrastructure (External / Adapter)"]
+        InMemoryChatRepository["InMemoryChatRepository (DB Adapter)"]
+        GenAIChatProvider["GenAIChatProvider (AI Adapter)"]
     end
 
-    %% 의존성 및 구현 관계 매핑
-    ChatController --> ChatService : 의존 (Inbound Port)
-    GeminiChatService ..|> ChatService : 구현 (Inbound Port 구현체)
+    %% 의존 관계 연결 (방향: 외부 -> 내부)
+    ChatController -->|Call| ChatService
+    GeminiChatService -.->|Implements| ChatService
     
-    GeminiChatService --> ChatRepository : 의존 (Outbound Port)
-    GeminiChatService --> ChatProvider : 의존 (Outbound Port)
+    GeminiChatService -->|Call| ChatRepository
+    GeminiChatService -->|Call| ChatProvider
     
-    InMemoryChatRepository ..|> ChatRepository : 구현 (Outbound Port 구현체)
-    GenAIChatProvider ..|> ChatProvider : 구현 (Outbound Port 구현체)
+    InMemoryChatRepository -.->|Implements| ChatRepository
+    GenAIChatProvider -.->|Implements| ChatProvider
     
-    GeminiChatService ..> Chat : 사용
-    ChatResponseDTO ..> Chat : 사용
+    GeminiChatService -->|Reference| Chat
+    ChatResponseDTO -->|Reference| Chat
 ```
 
 ---

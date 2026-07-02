@@ -60,6 +60,6 @@ public class ChatController extends BaseController {
                 ZonedDateTime.now().toString()
         );
         chatService.sendMessage(chat);
-        resp.sendRedirect("%s/%s".formatted(req.getContextPath(), "chat.jsp"));
+        resp.sendRedirect("%s/%s".formatted(req.getContextPath(), "chat"));
     }
 }

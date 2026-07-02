@@ -1,6 +1,6 @@
 package com.example.archat.controller.dto;
 
-import com.example.archat.model.Chat;
+import com.example.archat.domain.model.Chat;
 
 public record ChatResponseDTO(
         String owner,
@@ -12,12 +12,15 @@ public record ChatResponseDTO(
     public String getOwner() {
         return owner;
     }
+
     public String getModel() {
         return model;
     }
+
     public String getMessage() {
         return message;
     }
+
     public String getTimestamp() {
         return timestamp;
     }

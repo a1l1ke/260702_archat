@@ -1,5 +1,6 @@
 package com.example.archat.service;
 
+import com.example.archat.controller.dto.ChatResponseDTO;
 import com.example.archat.model.Chat;
 import com.example.archat.model.repository.ChatRepository;
 import com.example.archat.model.repository.InMemoryChatRepository;

@@ -10,6 +10,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
 import java.io.IOException;
+import java.util.List;
 
 @WebServlet("/chat")
 public class ChatController extends BaseController {
@@ -30,13 +31,15 @@ public class ChatController extends BaseController {
         // 접속 -> /chat
         // 데이터 불러오기
         HttpSession session = req.getSession(); // 세션 생성/불러오기 -> 유저를 구분
+        List<ChatResponseDTO> response = chatService.readHistory(session.getId())
+                // Stream -> map -> of(변환) -> jsp에서 최종적으로 만나게 되는...
+                .stream()
+                .map(ChatResponseDTO::of)
+                .toList();
+
         // 세션 자체가 가지고 있는 id를 사용해서 인메모리 DB에서의 데이터를 구분
         req.setAttribute("chats",
-                chatService.readHistory(session.getId())
-                        // Stream -> map -> of(변환) -> jsp에서 최종적으로 만나게 되는...
-                        .stream()
-                        .map(ChatResponseDTO::of)
-                        .toList());
+                response);
 
         // 주소를 유지한채 jsp 포워딩 + 보안 + 가상 경로
         // webapp/WEB-INF/views/chat.jsp

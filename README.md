@@ -65,22 +65,12 @@ src/main/java/com/example/archat/
 
 ---
 
-## ⚙️ 실행 방법
+## ⚙️ 환경변수 설정
 
-### 1. 환경변수 설정
 AI 엔진 호출을 위해 로컬 OS 환경 변수에 API Key를 등록해야 합니다.
 
 ```bash
 # MacOS / Linux (.zshrc 또는 .bashrc)
 export GEMINI_API_KEY="your-gemini-api-key"
 export GROQ_API_KEY="your-groq-api-key"
-```
-
-### 2. 빌드 및 배포
-```bash
-# Maven 패키징 (war 생성)
-mvn clean package
-
-# Tomcat webapps 디렉토리에 배포 후 실행
-# 브라우저 접속 주소: http://localhost:8080/archat/chat
 ```

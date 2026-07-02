@@ -5,7 +5,9 @@ import com.example.archat.model.Chat;
 import com.example.archat.model.repository.ChatRepository;
 import com.example.archat.model.repository.InMemoryChatRepository;
 import com.google.genai.Client;
+import com.google.genai.types.Content;
 import com.google.genai.types.GenerateContentResponse;
+import com.google.genai.types.Part;
 
 import java.time.ZonedDateTime;
 import java.util.List;
@@ -47,10 +49,20 @@ public class ChatService {
     }
 
     private String useAI(Chat chat) {
+        // chat ?
+        // chat.sessionId()
+        List<Chat> history = chatRepository.findAllByUserId(chat.sessionId());
+        List<Content> contents = history.stream()
+                .map((c) -> Content.builder()
+                        .role(chat.owner().equals("USER") ? "user" : "model")
+                        .parts(Part.builder().text(c.message()).build())
+                        .build())
+                .toList();
         try (Client client = GenAIConfig.getClient()) {
             GenerateContentResponse response = client.models.generateContent(
                     chat.model(),
-                    chat.message(),
+                    contents,
+//                    chat.message(),
                     GenAIConfig.getGenerateContentConfig());
             return response.text();
         } catch (Exception e) {

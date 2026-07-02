@@ -10,6 +10,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
 import java.io.IOException;
+import java.time.ZonedDateTime;
 import java.util.List;
 
 @WebServlet("/chat")
@@ -48,4 +49,17 @@ public class ChatController extends BaseController {
     }
 
     // post
+
+    @Override
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        Chat chat = new Chat(
+                req.getParameter("message"),
+                "USER",
+                req.getSession().getId(),
+                req.getParameter("model"),
+                ZonedDateTime.now().toString()
+        );
+        chatService.sendMessage(chat);
+        resp.sendRedirect("%s/%s".formatted(req.getContextPath(), "chat.jsp"));
+    }
 }

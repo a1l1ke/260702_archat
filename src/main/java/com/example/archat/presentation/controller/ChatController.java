@@ -1,8 +1,8 @@
-package com.example.archat.controller;
+package com.example.archat.presentation.controller;
 
-import com.example.archat.controller.dto.ChatResponseDTO;
+import com.example.archat.application.service.GeminiChatService;
 import com.example.archat.domain.model.Chat;
-import com.example.archat.service.GeminiChatService;
+import com.example.archat.presentation.dto.ChatResponseDTO;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServletRequest;

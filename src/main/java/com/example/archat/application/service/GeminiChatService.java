@@ -1,9 +1,9 @@
-package com.example.archat.service;
+package com.example.archat.application.service;
 
-import com.example.archat.config.GenAIConfig;
 import com.example.archat.domain.model.Chat;
 import com.example.archat.domain.repository.ChatRepository;
-import com.example.archat.model.repository.InMemoryChatRepository;
+import com.example.archat.infrastructure.api.GenAIConfig;
+import com.example.archat.infrastructure.repository.InMemoryChatRepository;
 import com.google.genai.Client;
 import com.google.genai.types.Content;
 import com.google.genai.types.GenerateContentResponse;

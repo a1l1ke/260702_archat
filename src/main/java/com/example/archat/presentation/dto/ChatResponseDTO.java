@@ -1,4 +1,4 @@
-package com.example.archat.controller.dto;
+package com.example.archat.presentation.dto;
 
 import com.example.archat.domain.model.Chat;
 

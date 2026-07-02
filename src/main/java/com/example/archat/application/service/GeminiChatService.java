@@ -41,7 +41,7 @@ public class GeminiChatService {
         Chat aiChat = new Chat(
                 aiResponse,
                 "AI",
-                chat.sessionId(),
+                chat.userId(),
                 chat.model(),
                 ZonedDateTime.now().toString()
         );
@@ -50,8 +50,8 @@ public class GeminiChatService {
 
     private String useAI(Chat chat) {
         // chat ?
-        // chat.sessionId()
-        List<Chat> history = chatRepository.findAllByUserId(chat.sessionId());
+        // chat.userId()
+        List<Chat> history = chatRepository.findAllByUserId(chat.userId());
         List<Content> contents = history.stream()
                 .map((c) -> Content.builder()
                         .role(chat.owner().equals("USER") ? "user" : "model")

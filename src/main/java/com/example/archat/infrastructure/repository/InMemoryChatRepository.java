@@ -27,7 +27,7 @@ public class InMemoryChatRepository implements ChatRepository {
     @Override
     public void save(Chat chat) {
         chatMap.computeIfAbsent( // 특정한 계산을 시킬 건데, 없을 때 해당 계산/대입을 진행
-                chat.sessionId(),
+                chat.userId(),
                 k -> new ArrayList<>()
         ).add(chat);
     }

@@ -4,6 +4,7 @@ import com.example.archat.application.port.ChatProvider;
 import com.example.archat.domain.model.Chat;
 import com.example.archat.domain.repository.ChatRepository;
 import com.example.archat.domain.service.ChatService;
+import com.example.archat.infrastructure.api.GenAIChatProvider;
 import com.example.archat.infrastructure.api.GenAIConfig;
 import com.example.archat.infrastructure.repository.InMemoryChatRepository;
 import com.google.genai.Client;
@@ -63,7 +64,7 @@ public class GeminiChatService implements ChatService {
 
     private GeminiChatService() {
         this.chatRepository = InMemoryChatRepository.getInstance();
-        this.chatProvider = GeminiChatProvider.getInstance();
+        this.chatProvider = GenAIChatProvider.getInstance();
     }
 
     private static final GeminiChatService instance = new GeminiChatService();

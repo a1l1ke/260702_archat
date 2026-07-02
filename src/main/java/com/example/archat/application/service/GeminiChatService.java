@@ -1,5 +1,6 @@
 package com.example.archat.application.service;
 
+import com.example.archat.application.port.ChatProvider;
 import com.example.archat.domain.model.Chat;
 import com.example.archat.domain.repository.ChatRepository;
 import com.example.archat.domain.service.ChatService;
@@ -16,16 +17,13 @@ import java.util.List;
 public class GeminiChatService implements ChatService {
 
     private final ChatRepository chatRepository;
-
-    @Override
-    public List<Chat> findAllByUserId(String userId) {
-        return chatRepository.findAllByUserId(userId);
-    }
+    private final ChatProvider chatProvider;
 
     @Override
     public void save(Chat chat) {
         chatRepository.save(chat);
-        String aiResponse = useAI(chat);
+//        String aiResponse = useAI(chat);
+        String aiResponse = chatProvider.useAI(chat);
         Chat aiChat = new Chat(
                 aiResponse,
                 "AI",
@@ -34,6 +32,11 @@ public class GeminiChatService implements ChatService {
                 ZonedDateTime.now().toString()
         );
         chatRepository.save(aiChat);
+    }
+
+    @Override
+    public List<Chat> findAllByUserId(String userId) {
+        return chatRepository.findAllByUserId(userId);
     }
 
     private String useAI(Chat chat) {
@@ -60,6 +63,7 @@ public class GeminiChatService implements ChatService {
 
     private GeminiChatService() {
         this.chatRepository = InMemoryChatRepository.getInstance();
+        this.chatProvider = GeminiChatProvider.getInstance();
     }
 
     private static final GeminiChatService instance = new GeminiChatService();
@@ -68,23 +72,4 @@ public class GeminiChatService implements ChatService {
         return instance;
     }
 
-//    public void sendMessage(Chat chat) {
-//        // 유저 데이터를 저장
-//        chatRepository.save(chat);
-//        // AI 데이터를 생성
-//        // ...
-//        String aiResponse = useAI(chat);
-//        Chat aiChat = new Chat(
-//                aiResponse,
-//                "AI",
-//                chat.userId(),
-//                chat.model(),
-//                ZonedDateTime.now().toString()
-//        );
-//        chatRepository.save(aiChat);
-//    }
-
-//    public List<Chat> readHistory(String userId) {
-//        return chatRepository.findAllByUserId(userId);
-//    }
 }

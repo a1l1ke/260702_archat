@@ -1,9 +1,7 @@
 package com.example.archat.config;
 
 import com.google.genai.Client;
-import com.google.genai.types.Content;
-import com.google.genai.types.GenerateContentConfig;
-import com.google.genai.types.Part;
+import com.google.genai.types.*;
 
 public class GenAIConfig {
     private static final String GEMINI_API_KEY = System.getenv("GEMINI_API_KEY");
@@ -19,6 +17,12 @@ public class GenAIConfig {
         return GenerateContentConfig
                 .builder()
                 .maxOutputTokens(512)
+                .thinkingConfig(
+                        ThinkingConfig.builder()
+                                .includeThoughts(false)
+                                .thinkingLevel(ThinkingLevel.Known.MINIMAL)
+                                .build()
+                )
                 .systemInstruction(
                         Content.builder().parts(
                                 Part.builder().text(SYSTEM_INSTRUCTION).build()).build())
